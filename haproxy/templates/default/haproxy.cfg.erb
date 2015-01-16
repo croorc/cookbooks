@@ -40,6 +40,10 @@ defaults
   <% end -%>
 
 
+listen stats_port_80
+        bind *:80
+        mode http
+
 listen s9s1_3306_LB1
 	bind *:3306
 	mode tcp
