@@ -39,4 +39,19 @@ defaults
   stats uri <%= node[:haproxy][:stats_url] %>
   <% end -%>
 
-#test
+
+listen s9s1_3306_LB1
+	bind *:3306
+	mode tcp
+	timeout client 60000ms
+	timeout server 60000ms
+	balance leastconn
+	option httpchk
+	default-server port 9200 inter 2s downinter 5s rise 3 fall 2 slowstart 60s maxconn 256 maxqueue 128 weight 100
+
+ <% node[:haproxy][:galera_backends].each do |backend| -%>
+  server <%= backend['name'] %> <%= backend['ip'] %>:3306 check <%= backend['backup'] %>
+  <% end -%>
+	#server 192.168.0.101 192.168.0.101:3306 check
+	#server 192.168.0.102 192.168.0.102:3306 check backup
+	#server 192.168.0.103 192.168.0.103:3306 check backup
